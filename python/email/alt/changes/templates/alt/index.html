@@ -1,0 +1,45 @@
+<form>
+    <label for="htmlInput">Enter HTML:</label><br>
+    <textarea id="htmlInput" rows="4" cols="50">
+    </textarea><br>
+    <button type="button" onclick="parseHTML()">Parse JSON</button>
+</form>
+
+<pre id="output"></pre>
+
+<script>
+    function converter(dom) {
+        if (dom.nodeType === Node.TEXT_NODE) {
+            return dom.nodeValue;
+        }
+        if (dom.nodeType === Node.DOCUMENT_NODE) {
+            dom = dom.documentElement;
+        }
+        const obj = {};
+        obj.nodeType = dom.nodeType;
+        if (dom.nodeType === Node.ELEMENT_NODE) {
+            obj.tagName = dom.tagName;
+            obj.attributes = [];
+            for (let i = 0, len = dom.attributes.length; i < len; ++i) {
+                const attr = dom.attributes[i];
+                obj.attributes.push({ name: attr.name, value: attr.value });
+            }
+            obj.children = [];
+            for (let child = dom.firstChild; child; child = child.nextSibling) {
+                obj.children.push(converter(child));
+            }
+        } else {
+            obj.nodeValue = dom.nodeValue;
+        }
+        return obj;
+    }
+
+    function parseHTML() {
+        const inputHTML = document.getElementById("htmlInput").value;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(inputHTML, "text/html");
+
+        const json = JSON.stringify(converter(doc.body), null, 4);  // Parse only the body content
+        document.getElementById("output").innerText = json;  // Display in <pre> element
+    }
+</script>
