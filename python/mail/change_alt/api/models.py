@@ -8,9 +8,3 @@ class Member(models.Model):
   def __str__(self):
     return self.name
   
-class Member(models.Model):
-  name = models.CharField(max_length=200,blank=True)
-  value = models.CharField(max_length=500,blank=True)
-
-  def __str__(self):
-    return self.name

@@ -20,7 +20,6 @@
 </html>
 
 <script>
-    
 
     function getCookie(name) {
         let cookieValue = null;
@@ -46,7 +45,6 @@
         async function getJson(url){
             let response = await fetch(url); // Fetch the data
             let jsonData = await response.json(); // Parse the JSON response
-            console.log(jsonData);
             // Loop through JSON data and append to the load element
             jsonData.forEach(item => { 
                 let div = document.createElement('div');
@@ -108,7 +106,6 @@
                 attributes.push(...childAttributes); // Merge the result
             });
         }
-        console.log(attributes)
         return attributes;
     }
 
@@ -143,6 +140,42 @@
         parseHTML();
         console.log("clicked");
         loadJson();
+        domChange();
     });
+
+    function img_find() {
+            const inputHTML = document.getElementById("htmlInput").value;
+            // Create a temporary div to hold the input HTML
+            const tempDiv = document.createElement('p');
+            tempDiv.innerHTML = inputHTML;
+
+            // Use Array.from() to convert the HTMLCollection to an array and extract raw filenames
+            return Array.from(tempDiv.getElementsByTagName("img")).map(img => img.src.split('/').pop());
+        }
+
+    // DOM manipulation
+    // Update to API -> GET API -> use DOM manipulation to update on HTML text
+    function domChange(){
+        const arr = img_find();
+        function loadJson(){
+            var load = document.getElementById('load_json')
+            var url = "/api/get/";
+                async function getJson(url){
+                    let response = await fetch(url); // Fetch the data
+                    let jsonData = await response.json(); // Parse the JSON response
+                    // Loop through JSON data and update element to inputHTML value
+                    // console.log(arr)
+                    jsonData.forEach(item => {
+                        // console.log(item.value.split('/').pop());
+                        if (arr.includes(item.value.split('/').pop() )) {
+                            console.log(`Match found: ${item.value}`);
+                        }
+                    });
+                }
+                getJson(url);
+            }
+        loadJson();
+    }
+
 
 </script>
