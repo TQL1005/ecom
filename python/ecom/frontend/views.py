@@ -10,6 +10,7 @@ def store(request):
     for x in r.json():
         products.append({
             'name': x['name'],
+            'id':x['id'],
             'price': x['price'],
             'images': x['images']
         })
