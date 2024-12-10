@@ -1,53 +1,26 @@
 {% extends 'index.html' %}
 
 {% block content %}
-	<div class="row" id="product-list">
-		<!-- Products will be dynamically inserted here by JavaScript -->
+<div class="row">
+	{% for product in products %}
+	<div class="col-lg-4">
+		<img class="thumbnail" style="width: 100%;" src="{{product.images}}">
+		<div class="box-element product">
+			<h6><strong>{{product.name}}</strong></h6>
+			<hr>
+
+			<div style="display: flex; gap:1em; justify-content: space-between;">
+				<div>
+					<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+					<a class="btn btn-outline-success" href="#">View</a>		
+				</div>
+			
+				<h4><strong>${{product.price}}</strong></h4>
+			</div>
+		</div>
 	</div>
+	{% endfor %}
+</div>
 
-<script>
-	window.onload = function() {
-		fetch_product();
-	};
 
-	 async function fetch_product() {
-        try{
-          const response = await fetch('/api/product');
-          const data = await response.json();
-          const products = data;
-		  displayProduct(products); 
-		  console.log(products);
-        }
-        catch{
-          console.error("Error found : " + error);
-        }
-    }
-
-	function displayProduct(products){
-		const productList = document.getElementById('product-list');
-		productList.innerHTML = '';
-		products.forEach(e => {
-			const productE = document.createElement('div')
-			productE.classList.add('col-lg-4')
-			productE.innerHTML = `
-					<img class="thumbnail" src="${e.images}" alt="${e.name}" style="width:380px">
-					<div class="box-element product">
-						<h6><strong>${e.name}</strong></h6>
-						<hr>
-						<div style="display: flex; gap: 1em; justify-content: space-between;">
-							<div>
-								<button data-product="${e.id}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-								<a class="btn btn-outline-success" href="#">View</a>
-							</div>
-							<h4><strong>$${e.price}</strong></h4>
-						</div>
-					</div>
-				`;
-			productList.appendChild(productE)
-		});
-	}
-
-	
-
-</script>
 {% endblock %}
