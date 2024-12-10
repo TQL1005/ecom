@@ -20,11 +20,10 @@
 	      </li>
 	 
 	    </ul>
-      <a>
-        <img  id="cart-icon" style="width: 38px;margin-right: 20px;" src="{% static 'images/cart.png' %}">
-      </a>
-      <p id="cart-total">{{cartItems}}</p>
-
+      <div style="margin-right: 20px;">
+        <img id="cart-icon" style="width: 38px; vertical-align: middle;" src="{% static 'images/cart.png' %}">
+        <p id="cart-total" style="display: inline-block; vertical-align: top;color:darkgrey;">0</p>
+    </div>
 	    <div class="form-inline my-2 my-lg-0">
             <button class="btn btn-warning"  onclick="showLogin()"> Login </button>
             <div id="show">
@@ -49,6 +48,8 @@
 </html>
 
 <script>
+
+    sessionStorage.clear();
     // fetch_data();
     function showLogin() {
         const e = document.getElementById('show');
