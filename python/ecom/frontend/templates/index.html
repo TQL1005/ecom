@@ -3,6 +3,7 @@
 <head>
   {% load static %}
 	<title>Ecom</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
@@ -16,14 +17,14 @@
 	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 	    <ul class="navbar-nav mr-auto">
 	      <li class="nav-item active">
-	        <a class="nav-link">Store <span class="sr-only">(current)</span></a>
+	        <a class="nav-link" href="/">Store <span class="sr-only">(current)</span></a>
 	      </li>
 	 
 	    </ul>
-      <div style="margin-right: 20px;">
+      <a style="margin-right: 20px;" href="cart/" id="cart-click">
         <img id="cart-icon" style="width: 38px; vertical-align: middle;" src="{% static 'images/cart.png' %}">
         <p id="cart-total" style="display: inline-block; vertical-align: top;color:darkgrey;">0</p>
-    </div>
+      </a>
 	    <div class="form-inline my-2 my-lg-0">
             <button class="btn btn-warning"  onclick="showLogin()"> Login </button>
             <div id="show">
@@ -49,7 +50,6 @@
 
 <script>
 
-    sessionStorage.clear();
     // fetch_data();
     function showLogin() {
         const e = document.getElementById('show');
@@ -68,6 +68,7 @@
             console.error('Error fetching data:', error);
         }
     }
+    
 
     
 </script>

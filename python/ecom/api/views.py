@@ -26,4 +26,18 @@ def Product(request):
         customer_data = request.data
         response = supabase.table("Product").insert(customer_data).execute()
         return Response(response.data,status=status.HTTP_201_CREATED)
+    
+@api_view(['GET','POST'])
+def Order_item(request):
+    if request.method == 'GET':
+        response = supabase.table("OrderItem").select("*").execute()
+        return Response(response.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        customer_data = request.data
+        response = supabase.table("OrderItem").insert(customer_data).execute()
+        return Response(response.data,status=status.HTTP_201_CREATED)
+    
 
+
+    
