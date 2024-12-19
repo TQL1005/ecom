@@ -21,18 +21,10 @@
 	      </li>
 	 
 	    </ul>
-      <a style="margin-right: 20px;" href="cart/" id="cart-click">
+      <a style="margin-right: 20px;" href="{% url 'cart' %}">
         <img id="cart-icon" style="width: 38px; vertical-align: middle;" src="{% static 'images/cart.png' %}">
-        <p id="cart-total" style="display: inline-block; vertical-align: top;color:darkgrey;">0</p>
+        <p id="cart-total" style="display: inline-block; vertical-align: top;color:darkgrey;">{{ total }}</p>
       </a>
-	    <div class="form-inline my-2 my-lg-0">
-            <button class="btn btn-warning"  onclick="showLogin()"> Login </button>
-            <div id="show">
-              {% block login %}
-              {% endblock %}
-            </div>
-            
-	    </div>
 	  </div>
 	</nav>
 

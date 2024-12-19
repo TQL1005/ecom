@@ -1,12 +1,11 @@
 var btnCart = document.getElementsByClassName("update-cart");
+
 document.addEventListener("DOMContentLoaded", function () {
     // Ensure the function only executes when a button is clicked
-    const postButton = document.getElementById("cart-click");
-
-    if (postButton) {
-        postButton.addEventListener("click", function () {
-            order_itemPost();
-        });
+    for (var i = 0; i < btnCart.length; i++) {
+        if (btnCart[i]) {
+            btnCart[i].addEventListener("click", myFunc);
+        }
     }
 });
 
@@ -16,7 +15,6 @@ function getToken(name) {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
             var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -25,62 +23,60 @@ function getToken(name) {
     }
     return cookieValue;
 }
-var csrftoken = getToken('csrftoken')
+var csrftoken = getToken('csrftoken');
 
-
-for (let index = 0; index < btnCart.length; index++) {
-    btnCart[index].addEventListener("click", myFunc);
-}
 function myFunc(event) {
     var productId = event.target.getAttribute('data-product');
     var action = event.target.getAttribute('data-action');
     console.log("product " + productId + " action " + action);
-    let x = 0;
-    if (sessionStorage.getItem(productId)) {
-        x = parseInt(sessionStorage.getItem(productId));
-    } else {
-        x = 0;
-    }
+    let x = sessionStorage.getItem(productId) ? parseInt(sessionStorage.getItem(productId)) : 0;
+
     if (action) {
-        x = x + 1;
+        x += 1;
     }
+    let total = 0;
+    var count = document.getElementById("cart-total");
+    total = parseInt(count.innerHTML) + 1; 
+    count.innerHTML=total;
     sessionStorage.setItem(productId, x);
-   
+
     
+    fetch_data_order_item_all().then(order_item_all => {
+        console.log("Extracted Data:", order_item_all);
+
+        // Iterate through the resolved data
+        const productExists = order_item_all.some(item => item.product === parseInt(productId));
+
+        if (productExists) {
+            order_itemUpdate();  // Product exists, update it
+        } else {
+            order_itemPush();  // Product does not exist, push it
+        }
+    }).catch(error => {
+        console.error("Error fetching data:", error);
+    });
+    
+    }
+
+    async function fetch_data_order_item_all() {
+        const response = await fetch('/api/order_item');
+        const data = await response.json();
+        return data['items'];
+    }
+
+async function fetch_data_order_item() {
+    const response = await fetch('/api/order_item');
+    const data = await response.json();
+    return data['total_quantity'] || 0;  // Default to 0 if undefined
 }
 
-clickCount();
-
-function clickCount() {
-    // Select all elements with the "update-cart" class
-    const cartButtons = document.getElementsByClassName("update-cart");
-
-    // Loop through each button and attach an event listener
-    for (let i = 0; i < cartButtons.length; i++) {
-        cartButtons[i].addEventListener("click", function () {
-            // Increment the click count in sessionStorage
-            if (sessionStorage.clickcount) {
-                sessionStorage.clickcount = Number(sessionStorage.clickcount) + 1;
-            } else {
-                sessionStorage.clickcount = 1;
-            }
-
-            // Update the cart total display
-            var cartTotalElement = document.getElementById("cart-total");
-            if (cartTotalElement) {
-                cartTotalElement.innerHTML = sessionStorage.clickcount;
-            }
-        });
-    }
-    // Update the cart total display
-    var cartTotalElement = document.getElementById("cart-total");
-    if (typeof sessionStorage.clickcount !== 'undefined') {
-        cartTotalElement.innerHTML = sessionStorage.clickcount;
-    }else{
-        cartTotalElement.innerHTML = "0";
-    }
+async function updateCartTotal() {
+    const total = await fetch_data_order_item();
+    const cartTotalElement = document.getElementById("cart-total");
+    cartTotalElement.innerHTML = total;
 }
 
+document.addEventListener("DOMContentLoaded", updateCartTotal);
 
 function getData() {
     let data = [];
@@ -99,17 +95,31 @@ function getData() {
     return data;
 }
 
-
-function order_itemPost() {
-    var url = '/api/order_item';
-    var data = getData();
-    fetch(url, {
-        method: 'POST',
+async function order_itemUpdate() {
+    const url = '/api/order_item_update';
+    const data = getData();
+    const response = await fetch(url, {
+        method: 'POST', 
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrftoken,
         },
         body: JSON.stringify(data)
-    })
+    });
+    sessionStorage.clear();  // Optional: Clear the session storage after posting
 }
 
+
+async function order_itemPush() {
+    const url = '/api/order_item';
+    const data = getData();
+    const response = await fetch(url, {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify(data)
+    });
+    sessionStorage.clear();  // Optional: Clear the session storage after posting
+}
